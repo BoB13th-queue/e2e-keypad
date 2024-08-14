@@ -1,16 +1,15 @@
 package bob.e2e.presentation.controller
 
-import bob.e2e.utils.logger.Logger
-import java.security.MessageDigest
 import bob.e2e.domain.service.KeypadService
 import bob.e2e.presentation.dto.GetKeypadResDto
 import org.springframework.web.bind.annotation.GetMapping
 import org.springframework.web.bind.annotation.RequestMapping
 import org.springframework.web.bind.annotation.RestController
+import java.security.MessageDigest
 import java.time.LocalDateTime
 
 
-@RequestMapping("keypad")
+@RequestMapping("api")
 @RestController
 class TestController {
     // Create

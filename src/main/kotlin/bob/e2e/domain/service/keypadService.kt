@@ -1,13 +1,11 @@
 package bob.e2e.domain.service
 
-import bob.e2e.utils.logger.Logger
 import org.slf4j.LoggerFactory
 import org.springframework.core.io.ClassPathResource
-import java.util.*
-import java.awt.Graphics2D
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.util.*
 import javax.imageio.ImageIO
 
 
@@ -25,7 +23,8 @@ class KeypadService {
 
         fun getKeymap(): Map<String, String> {
             val inputList = listOf("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ")
-            val map: Map<String, String> = inputList.associateWith { UUID.randomUUID().toString() }
+            val map: MutableMap<String, String> = inputList.associateWith { UUID.randomUUID().toString() }.toMutableMap()
+            map[" "] = " "
 
             return map.toMap()
         }
@@ -36,11 +35,11 @@ class KeypadService {
 
             // get Image from Resource
             for (i in 0..9) {
-                val imgFile = ClassPathResource("_$i.png")
+                val imgFile = ClassPathResource("keypad/_$i.png")
                 imageList[i.toString()] = imgFile.inputStream.readBytes()
             }
 
-            imageList[" "] = ClassPathResource("_blank.png").inputStream.readBytes()
+            imageList[" "] = ClassPathResource("keypad/_blank.png").inputStream.readBytes()
 
             return imageList.toMap()
         }
