@@ -5,6 +5,7 @@ import org.springframework.core.io.ClassPathResource
 import java.awt.image.BufferedImage
 import java.io.ByteArrayInputStream
 import java.io.ByteArrayOutputStream
+import java.security.MessageDigest
 import java.util.*
 import javax.imageio.ImageIO
 
@@ -12,6 +13,7 @@ import javax.imageio.ImageIO
 class KeypadService {
     companion object {
         private val logger = LoggerFactory.getLogger(KeypadService::class.java)
+        private val secretKey = "secretKey"
 
         fun getShuffleKeyNum(): List<String> {
             val shuffleKeyNum = mutableListOf<String>(
@@ -23,7 +25,7 @@ class KeypadService {
 
         fun getKeymap(): Map<String, String> {
             val inputList = listOf("0", "1", "2", "3", "4", "5", "6", "7", "8", "9", " ")
-            val map: MutableMap<String, String> = inputList.associateWith { UUID.randomUUID().toString() }.toMutableMap()
+            val map: MutableMap<String, String> = inputList.associateWith { UUID.randomUUID().toString().replace("-", "") }.toMutableMap()
             map[" "] = " "
 
             return map.toMap()
@@ -85,7 +87,18 @@ class KeypadService {
         }
 
         fun getPubKey(): String {
-            return "PubKey"
+            ClassPathResource("public_key.pem").inputStream.bufferedReader().use {
+                return it.readText()
+            }
+        }
+
+        fun getHash(keypadId: String, timeStamp: String): String {
+            val bytes = "$keypadId $timeStamp $this.secretKey".toByteArray()
+            val md = MessageDigest.getInstance("SHA-256")
+            val digest = md.digest(bytes)
+            val hashCheck = digest.fold("") { str, it -> str + "%02x".format(it) }
+
+            return hashCheck
         }
     }
 
